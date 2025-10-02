@@ -2,6 +2,19 @@
 
 Este é o frontend da plataforma BetterEdge, construído com Next.js 14, TypeScript, ShadCN UI, TanStack Query, React-Hook-Form e Zod.
 
+## Acesso em Produção
+
+A aplicação está disponível em produção no Railway:
+
+**🔗 URL:** [https://betteredge-frontend-production.up.railway.app/](https://betteredge-frontend-production.up.railway.app/)
+
+### Credenciais de Acesso Padrão
+
+Para acessar a aplicação, utilize as seguintes credenciais:
+
+- **Email:** `admin@betteredge.com`
+- **Senha:** `admin123`
+
 ## Tecnologias Utilizadas
 
 - **Next.js 14** - Framework React com App Router

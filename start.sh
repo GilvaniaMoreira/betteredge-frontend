@@ -8,7 +8,13 @@ fi
 # Garantir permissões corretas
 chmod 644 /app/next-env.d.ts 2>/dev/null || true
 
-# Iniciar aplicação
-npm run dev
+# Instalar dependências de produção se necessário
+npm ci --only=production
+
+# Construir a aplicação
+npm run build
+
+# Iniciar aplicação em modo produção
+npm start
 
 
