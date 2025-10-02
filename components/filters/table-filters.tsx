@@ -5,13 +5,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { FilterState } from "@/hooks/use-table-filters"
 import { DateRangePicker } from "@/components/ui/date-range-picker"
-import { Search, X, Filter } from "lucide-react"
+import { Search, X } from "lucide-react"
 import { DateRange } from "react-day-picker"
 
 interface TableFiltersProps {
   filters: FilterState
   onSearch: (value: string) => void
-  onStatus: (value: "active" | "inactive" | "all") => void
+  onStatus?: (value: "active" | "inactive" | "all") => void
   onType?: (value: string) => void
   onClientId?: (value: number | undefined) => void
   onAssetId?: (value: number | undefined) => void
@@ -76,7 +76,7 @@ export function TableFilters({
 
       {/* Status Filter */}
       {showStatusFilter && (
-        <Select value={filters.status || "all"} onValueChange={onStatus}>
+        <Select value={filters.status || "all"} onValueChange={onStatus || (() => {})}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Status" />
           </SelectTrigger>

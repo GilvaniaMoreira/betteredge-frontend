@@ -5,8 +5,6 @@ import {
   Users, 
   PieChart, 
   TrendingUp, 
-  FileText, 
-  Settings,
   LogOut,
   Home
 } from 'lucide-react'

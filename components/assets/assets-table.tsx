@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { assetsService } from '@/services/assets'
-import { Edit, Trash2, RefreshCw } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Button } from '@/components/ui/button'
 import { AddAssetDialog } from './add-asset-dialog'
@@ -91,8 +91,8 @@ export function AssetsTable() {
   ]
 
   // Extrair listas únicas de bolsas e moedas
-  const exchanges = [...new Set(assetsData?.items?.map(asset => asset.exchange).filter(Boolean) || [])]
-  const currencies = [...new Set(assetsData?.items?.map(asset => asset.currency).filter(Boolean) || [])]
+  const exchanges = Array.from(new Set(assetsData?.items?.map(asset => asset.exchange).filter(Boolean) || []))
+  const currencies = Array.from(new Set(assetsData?.items?.map(asset => asset.currency).filter(Boolean) || []))
 
   const handleExport = () => {
     const exportData = assetsData?.items || []
@@ -140,7 +140,6 @@ export function AssetsTable() {
       {isFormOpen && (
         <AddAssetDialog
           onClose={handleFormClose}
-          asset={editingAsset}
         />
       )}
     </>

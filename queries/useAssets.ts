@@ -39,7 +39,7 @@ export function useUpdateAsset() {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<AssetCreate> }) =>
       assetsService.updateAsset(id, data),
-    onSuccess: (_: any, { id }: { id: number }) => {
+    onSuccess: (_: any, { id }: { id: number; data: Partial<AssetCreate> }) => {
       queryClient.invalidateQueries({ queryKey: ['assets'] })
       queryClient.invalidateQueries({ queryKey: ['asset', id] })
       toast.success('Ativo atualizado com sucesso!')

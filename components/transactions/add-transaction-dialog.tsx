@@ -20,9 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, DollarSign } from "lucide-react";
+import { DollarSign } from "lucide-react";
 import { TransactionType, TransactionCreate } from "@/types/transaction";
-import { Client } from "@/types/client";
 import { clientsService } from "@/services/clients";
 import { transactionsService } from "@/services/transactions";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";

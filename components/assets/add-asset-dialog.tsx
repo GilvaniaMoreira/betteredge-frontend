@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Search, Plus, X, CheckCircle, Building2, DollarSign, TrendingUp, Loader2 } from 'lucide-react'
-import { YahooSearchSimpleResult, YahooSearchResult } from '@/types/asset'
+import { YahooSearchSimpleResult } from '@/types/asset'
 import { useSearchYahooAssets, useYahooAssetDetails, useCreateAsset } from '@/queries/useAssets'
 
 interface AddAssetDialogProps {
