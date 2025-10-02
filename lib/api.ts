@@ -9,7 +9,7 @@ export const api = axios.create({
   },
 })
 
-// Request interceptor to add auth token
+// Interceptor para adicionar token de autenticação
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token')
@@ -23,7 +23,7 @@ api.interceptors.request.use(
   }
 )
 
-// Response interceptor to handle auth errors
+// Interceptor para tratar erros de autenticação
 api.interceptors.response.use(
   (response) => response,
   (error) => {

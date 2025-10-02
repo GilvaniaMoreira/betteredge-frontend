@@ -82,7 +82,6 @@ export function TransactionsTable() {
       )
     }
     
-    // For other columns, return null to let default rendering handle it
     return null
   }
 

@@ -41,7 +41,6 @@ export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
     try {
       await login(data.email, data.password)
       toast.success('Login realizado com sucesso!')
-      // Redirect to dashboard
       router.push('/dashboard')
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Erro ao fazer login')

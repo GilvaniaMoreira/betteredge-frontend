@@ -58,7 +58,6 @@ export function CaptationChart() {
 
   const { total_deposits, total_withdrawals, net_captation } = captationReport.summary
 
-  // Dados para o gráfico de barras
   const chartData = [
     {
       name: 'Depósitos',

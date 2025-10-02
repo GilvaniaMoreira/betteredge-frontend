@@ -44,7 +44,6 @@ export function AddTransactionDialog({ open, onClose, transaction, onTransaction
     note: ""
   });
 
-  // Update form data when transaction prop changes (for editing)
   useEffect(() => {
     if (transaction) {
       setFormData({
@@ -55,7 +54,6 @@ export function AddTransactionDialog({ open, onClose, transaction, onTransaction
         note: transaction.note || ""
       });
     } else {
-      // Reset form for new transaction
       setFormData({
         client_id: 0,
         type: TransactionType.DEPOSIT,
@@ -68,15 +66,12 @@ export function AddTransactionDialog({ open, onClose, transaction, onTransaction
 
   const queryClient = useQueryClient();
 
-  // Fetch clients
   const { data: clientsData } = useQuery({
     queryKey: ['clients'],
     queryFn: () => clientsService.getClients({ page: 1, size: 1000 }),
   });
 
   const clients = clientsData?.items || [];
-
-  // Create or update transaction mutation
   const saveTransactionMutation = useMutation({
     mutationFn: (data: TransactionCreate) => {
       if (transaction) {
