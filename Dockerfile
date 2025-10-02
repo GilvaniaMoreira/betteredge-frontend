@@ -5,6 +5,8 @@ WORKDIR /app
 # Copiar arquivos de dependências
 COPY package*.json ./
 
+ARG NEXT_PUBLIC_API_URL
+
 # Instalar dependências
 RUN npm ci
 
