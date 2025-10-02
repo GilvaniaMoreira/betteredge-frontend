@@ -62,6 +62,7 @@ export interface AllocationSummary {
   total_quantity: number;
   assets_count: number;
   clients_count: number;
+  client_id?: number;
 }
 
 export interface ClientAllocationSummary {

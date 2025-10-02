@@ -3,9 +3,11 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/use-auth'
-import { Sidebar } from '@/components/layout/sidebar'
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
+import { AppSidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
 import { AllocationsTable } from '@/components/allocations/allocations-table'
+import { Loading } from '@/components/ui/loading'
 
 export default function AllocationsPage() {
   const router = useRouter()
@@ -18,14 +20,7 @@ export default function AllocationsPage() {
   }, [isAuthenticated, isLoading, router])
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
-        </div>
-      </div>
-    )
+    return <Loading />
   }
 
   if (!isAuthenticated) {
@@ -33,16 +28,14 @@ export default function AllocationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Header />
-          <main className="flex-1 p-6 bg-gray-50 dark:bg-slate-900">
-            <AllocationsTable />
-          </main>
-        </div>
-      </div>
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <Header />
+        <main className="flex-1 p-6 bg-gray-50 dark:bg-slate-900">
+          <AllocationsTable />
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

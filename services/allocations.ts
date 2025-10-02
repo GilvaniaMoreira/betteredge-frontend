@@ -26,8 +26,9 @@ export const allocationsService = {
     await api.delete(`/allocations/${id}`)
   },
 
-  getAllocationSummary: async (): Promise<AllocationSummary> => {
-    const response = await api.get('/allocations/stats/total-value')
+  getAllocationSummary: async (clientId?: number): Promise<AllocationSummary> => {
+    const params = clientId ? { client_id: clientId } : {}
+    const response = await api.get('/allocations/stats/total-value', { params })
     return response.data
   }
 }

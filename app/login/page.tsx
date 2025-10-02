@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { LoginForm } from '@/components/forms/login-form'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Loading } from '@/components/ui/loading'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -22,10 +23,7 @@ export default function LoginPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <Card className="max-w-md w-full">
           <CardContent className="pt-6">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Carregando...</p>
-            </div>
+            <Loading fullScreen={false} />
           </CardContent>
         </Card>
       </div>

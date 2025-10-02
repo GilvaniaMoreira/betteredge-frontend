@@ -28,29 +28,21 @@ export function OverviewCards() {
     {
       title: 'Receita Bruta',
       value: formatCurrency(captationStats?.summary?.total_deposits || 0),
-      change: '+4.8%',
-      changeType: 'positive' as const,
       icon: TrendingUp,
     },
     {
       title: 'Receita Líquida',
       value: formatCurrency(captationStats?.summary?.net_captation || 0),
-      change: '+4.8%',
-      changeType: 'positive' as const,
       icon: TrendingUp,
     },
     {
       title: 'Total de Clientes',
       value: clientsData?.total?.toString() || '0',
-      change: '+12%',
-      changeType: 'positive' as const,
       icon: Users,
     },
     {
       title: 'Alocação Total',
       value: formatCurrency(allocationStats?.total_value || 0),
-      change: '+9.3%',
-      changeType: 'positive' as const,
       icon: PieChart,
     },
   ]
@@ -69,16 +61,6 @@ export function OverviewCards() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{card.value}</div>
-              <p className={`text-xs flex items-center mt-1 ${
-                card.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {card.changeType === 'positive' ? (
-                  <TrendingUp className="h-3 w-3 mr-1" />
-                ) : (
-                  <TrendingDown className="h-3 w-3 mr-1" />
-                )}
-                {card.change} desde o mês passado
-              </p>
             </CardContent>
           </Card>
         )

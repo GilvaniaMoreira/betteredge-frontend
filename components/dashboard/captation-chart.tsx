@@ -17,43 +17,33 @@ export function CaptationChart() {
     setIsClient(true)
   }, [])
 
+  // Função para renderizar estados do componente
+  const renderState = (message: string, className?: string) => (
+    <Card>
+      <CardHeader>
+        <CardTitle>Relatório de Captação</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className={className}>{message}</p>
+      </CardContent>
+    </Card>
+  )
+
+  // Verificar estados de carregamento e erro
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Relatório de Captação</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Carregando dados...</p>
-        </CardContent>
-      </Card>
-    )
+    return renderState('Carregando dados...')
   }
 
   if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Relatório de Captação</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-red-600">Erro ao carregar dados</p>
-        </CardContent>
-      </Card>
-    )
+    return renderState('Erro ao carregar dados', 'text-red-600')
   }
 
   if (!captationReport || !captationReport.summary) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Relatório de Captação</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Nenhum dado disponível</p>
-        </CardContent>
-      </Card>
-    )
+    return renderState('Nenhum dado disponível')
+  }
+
+  if (!isClient) {
+    return renderState('Carregando gráfico...')
   }
 
   const { total_deposits, total_withdrawals, net_captation } = captationReport.summary
@@ -72,19 +62,6 @@ export function CaptationChart() {
   ]
 
   const COLORS = ['#10b981', '#ef4444']
-
-  if (!isClient) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Relatório de Captação</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Carregando gráfico...</p>
-        </CardContent>
-      </Card>
-    )
-  }
 
   return (
     <Card>
