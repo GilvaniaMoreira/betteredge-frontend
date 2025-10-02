@@ -66,13 +66,35 @@ export interface YahooFinanceAsset {
   name: string;
   exchange: string;
   currency: string;
-  current_price: number;
+  current_price?: number;
   sector?: string;
   industry?: string;
   market_cap?: number;
   volume?: number;
   pe_ratio?: number;
   dividend_yield?: number;
+  last_updated?: string;
+}
+
+export interface YahooSearchSimpleResult {
+  ticker: string;
+  name: string;
+  exchange?: string;
+}
+
+export interface YahooSearchResult {
+  ticker: string;
+  name: string;
+  exchange: string;
+  currency: string;
+  current_price?: number;
+  sector?: string;
+  industry?: string;
+  market_cap?: number;
+  volume?: number;
+  pe_ratio?: number;
+  dividend_yield?: number;
+  last_updated?: string;
 }
 
 

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { assetsService } from '@/services/assets'
-import { Asset, AssetCreate, AssetFilter } from '@/types/asset'
+import { Asset, AssetCreate, AssetFilter, YahooSearchSimpleResult, YahooSearchResult } from '@/types/asset'
 import { toast } from 'react-hot-toast'
 
 export function useAssets(params: AssetFilter = {}) {
@@ -39,7 +39,7 @@ export function useUpdateAsset() {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<AssetCreate> }) =>
       assetsService.updateAsset(id, data),
-    onSuccess: (_, { id }) => {
+    onSuccess: (_: any, { id }: { id: number }) => {
       queryClient.invalidateQueries({ queryKey: ['assets'] })
       queryClient.invalidateQueries({ queryKey: ['asset', id] })
       toast.success('Ativo atualizado com sucesso!')
@@ -65,42 +65,21 @@ export function useDeleteAsset() {
   })
 }
 
-export function useSearchYahooAssets(query: string) {
+export function useSearchYahooAssets(query: string, limit: number = 10) {
   return useQuery({
-    queryKey: ['yahoo-assets', query],
-    queryFn: () => assetsService.searchYahooAssets(query),
-    enabled: !!query && query.length > 2,
+    queryKey: ['yahoo-assets', query, limit],
+    queryFn: () => assetsService.searchYahooAssets(query, limit),
+    enabled: !!query && query.length > 0,
   })
 }
 
-export function useSaveYahooAsset() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (ticker: string) => assetsService.saveYahooAsset(ticker),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assets'] })
-      toast.success('Ativo do Yahoo Finance salvo com sucesso!')
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || 'Erro ao salvar ativo')
-    },
+export function useYahooAssetDetails(ticker: string) {
+  return useQuery({
+    queryKey: ['yahoo-asset-details', ticker],
+    queryFn: () => assetsService.getYahooAssetDetails(ticker),
+    enabled: !!ticker,
   })
 }
 
-export function useUpdateAssetPrices() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: () => assetsService.updateAssetPrices(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assets'] })
-      toast.success('Preços atualizados com sucesso!')
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || 'Erro ao atualizar preços')
-    },
-  })
-}
 
 

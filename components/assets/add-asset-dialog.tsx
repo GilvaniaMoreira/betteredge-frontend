@@ -1,156 +1,227 @@
 'use client'
 
 import { useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import toast from 'react-hot-toast'
-import { assetsService } from '@/services/assets'
-import { Search, Plus, X } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Search, Plus, X, CheckCircle, Building2, DollarSign, TrendingUp, Loader2 } from 'lucide-react'
+import { YahooSearchSimpleResult, YahooSearchResult } from '@/types/asset'
+import { useSearchYahooAssets, useYahooAssetDetails, useCreateAsset } from '@/queries/useAssets'
 
 interface AddAssetDialogProps {
   onClose: () => void
 }
 
 export function AddAssetDialog({ onClose }: AddAssetDialogProps) {
-  const [ticker, setTicker] = useState('')
-  const [searchResult, setSearchResult] = useState<any>(null)
-  const [isSearching, setIsSearching] = useState(false)
-  const queryClient = useQueryClient()
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedTicker, setSelectedTicker] = useState<string | null>(null)
+  const [showResults, setShowResults] = useState(false)
 
-  const searchMutation = useMutation({
-    mutationFn: (ticker: string) => assetsService.getYahooFinanceAsset(ticker),
-    onSuccess: (data) => {
-      setSearchResult(data)
-      toast.success(`Dados do ${data.ticker} carregados com sucesso.`)
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || 'Não foi possível buscar o ativo.')
-    },
-  })
+  // Buscar resultados simplificados (autocomplete)
+  const { data: searchResults = [], isLoading: isSearching } = useSearchYahooAssets(searchQuery, 10)
 
-  const saveMutation = useMutation({
-    mutationFn: (ticker: string) => assetsService.saveFromYahooFinance(ticker),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assets'] })
-      toast.success('Ativo foi adicionado com sucesso.')
-      onClose()
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || 'Não foi possível salvar o ativo.')
-    },
-  })
+  // Obter informações detalhadas quando um ticker é selecionado
+  const { data: selectedAsset, isLoading: isLoadingDetails } = useYahooAssetDetails(selectedTicker || '')
 
-  const handleSearch = async () => {
-    if (!ticker.trim()) return
-    
-    setIsSearching(true)
-    try {
-      await searchMutation.mutateAsync(ticker.toUpperCase())
-    } finally {
-      setIsSearching(false)
-    }
+  // Mutação para criar ativo
+  const createAssetMutation = useCreateAsset()
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value)
+    setShowResults(value.length > 0)
+    setSelectedTicker(null)
+  }
+
+  const handleSelectAsset = (asset: YahooSearchSimpleResult) => {
+    setSelectedTicker(asset.ticker)
+    setSearchQuery(`${asset.ticker} - ${asset.name}`)
+    setShowResults(false)
   }
 
   const handleSave = async () => {
-    if (!ticker.trim()) return
-    await saveMutation.mutateAsync(ticker.toUpperCase())
+    if (!selectedAsset) return
+
+    try {
+      await createAssetMutation.mutateAsync(selectedAsset)
+      onClose()
+    } catch (error) {
+      console.error('Error creating asset:', error)
+    }
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Adicionar Ativo do Yahoo Finance</CardTitle>
-              <CardDescription>
-                Busque e adicione ativos financeiros automaticamente
-              </CardDescription>
-            </div>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="w-4 h-4" />
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Busca */}
-          <div className="space-y-4">
-            <div className="flex space-x-2">
-              <div className="flex-1">
-                <Label htmlFor="ticker">Ticker do Ativo</Label>
-                <Input
-                  id="ticker"
-                  placeholder="Ex: AAPL, MSFT, GOOGL"
-                  value={ticker}
-                  onChange={(e) => setTicker(e.target.value.toUpperCase())}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                />
-              </div>
-              <Button 
-                onClick={handleSearch} 
-                disabled={isSearching || !ticker.trim()}
-                className="mt-6"
-              >
-                <Search className="w-4 h-4 mr-2" />
-                {isSearching ? 'Buscando...' : 'Buscar'}
-              </Button>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+        <div className="flex items-center justify-between p-6 border-b">
+          <h2 className="text-xl font-semibold">Adicionar Ativo</h2>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+
+        <div className="p-6 space-y-6 max-h-[calc(90vh-120px)] overflow-y-auto">
+          {/* Campo de Busca */}
+          <div className="space-y-2">
+            <Label htmlFor="search">Buscar Ativo</Label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                id="search"
+                placeholder="Digite o nome ou ticker do ativo..."
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="pl-10"
+              />
+              {isSearching && (
+                <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin" />
+              )}
             </div>
           </div>
 
-          {/* Resultado da Busca */}
-          {searchResult && (
-            <div className="space-y-4">
-              <div className="border rounded-lg p-4 bg-gray-50 dark:bg-slate-800">
-                <h3 className="font-semibold text-lg mb-3">Dados do Ativo</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium">Ticker:</span> {searchResult.ticker}
+          {/* Resultados da Busca (Autocomplete) */}
+          {showResults && searchQuery.length > 0 && (
+            <div className="space-y-2">
+              <Label>Resultados da Busca</Label>
+              <div className="max-h-48 overflow-y-auto border rounded-md">
+                {searchResults.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500">
+                    {isSearching ? 'Buscando...' : 'Nenhum ativo encontrado'}
                   </div>
-                  <div>
-                    <span className="font-medium">Nome:</span> {searchResult.name}
-                  </div>
-                  <div>
-                    <span className="font-medium">Exchange:</span> {searchResult.exchange || '-'}
-                  </div>
-                  <div>
-                    <span className="font-medium">Moeda:</span> {searchResult.currency || '-'}
-                  </div>
-                  <div>
-                    <span className="font-medium">Preço Atual:</span> 
-                    {searchResult.current_price ? ` $${searchResult.current_price.toFixed(2)}` : ' -'}
-                  </div>
-                  <div>
-                    <span className="font-medium">Setor:</span> {searchResult.sector || '-'}
-                  </div>
-                  <div>
-                    <span className="font-medium">Indústria:</span> {searchResult.industry || '-'}
-                  </div>
-                  <div>
-                    <span className="font-medium">Market Cap:</span> 
-                    {searchResult.market_cap ? ` $${(searchResult.market_cap / 1e9).toFixed(2)}B` : ' -'}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={onClose}>
-                  Cancelar
-                </Button>
-                <Button 
-                  onClick={handleSave}
-                  disabled={saveMutation.isPending}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {saveMutation.isPending ? 'Salvando...' : 'Salvar Ativo'}
-                </Button>
+                ) : (
+                  searchResults.map((asset, index) => (
+                    <div
+                      key={index}
+                      className="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                      onClick={() => handleSelectAsset(asset)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium">{asset.ticker}</div>
+                          <div className="text-sm text-gray-600">{asset.name}</div>
+                        </div>
+                        {asset.exchange && (
+                          <Badge variant="secondary">{asset.exchange}</Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+
+          {/* Detalhes do Ativo Selecionado */}
+          {selectedAsset && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-500" />
+                <span className="font-medium">Ativo Selecionado</span>
+              </div>
+
+              {isLoadingDetails ? (
+                <div className="flex items-center justify-center p-8">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                  <span className="ml-2">Carregando detalhes...</span>
+                </div>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Building2 className="h-5 w-5" />
+                      {selectedAsset.ticker} - {selectedAsset.name}
+                    </CardTitle>
+                    <CardDescription>
+                      {selectedAsset.exchange} • {selectedAsset.currency}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      {selectedAsset.current_price && (
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-green-500" />
+                          <div>
+                            <div className="text-sm text-gray-600">Preço Atual</div>
+                            <div className="font-medium">
+                              ${selectedAsset.current_price.toFixed(2)}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedAsset.sector && (
+                        <div>
+                          <div className="text-sm text-gray-600">Setor</div>
+                          <div className="font-medium">{selectedAsset.sector}</div>
+                        </div>
+                      )}
+
+                      {selectedAsset.industry && (
+                        <div>
+                          <div className="text-sm text-gray-600">Indústria</div>
+                          <div className="font-medium">{selectedAsset.industry}</div>
+                        </div>
+                      )}
+
+                      {selectedAsset.market_cap && (
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4 text-blue-500" />
+                          <div>
+                            <div className="text-sm text-gray-600">Market Cap</div>
+                            <div className="font-medium">
+                              ${(selectedAsset.market_cap / 1e9).toFixed(2)}B
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedAsset.pe_ratio && (
+                        <div>
+                          <div className="text-sm text-gray-600">P/E Ratio</div>
+                          <div className="font-medium">{selectedAsset.pe_ratio.toFixed(2)}</div>
+                        </div>
+                      )}
+
+                      {selectedAsset.dividend_yield && (
+                        <div>
+                          <div className="text-sm text-gray-600">Dividend Yield</div>
+                          <div className="font-medium">
+                            {(selectedAsset.dividend_yield * 100).toFixed(2)}%
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+
+          {/* Botões de Ação */}
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <Button variant="outline" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={!selectedAsset || isLoadingDetails || createAssetMutation.isPending}
+            >
+              {createAssetMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar Ativo
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

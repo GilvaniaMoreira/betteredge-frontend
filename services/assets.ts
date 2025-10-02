@@ -1,5 +1,5 @@
 import { api } from '@/lib/api'
-import { Asset, AssetCreate, AssetList, AssetFilter } from '@/types/asset'
+import { Asset, AssetCreate, AssetList, AssetFilter, YahooSearchResult, YahooSearchSimpleResult } from '@/types/asset'
 
 export const assetsService = {
   getAssets: async (params: AssetFilter = {}): Promise<AssetList> => {
@@ -26,25 +26,16 @@ export const assetsService = {
     await api.delete(`/assets/${id}`)
   },
 
-  searchYahooAssets: async (query: string) => {
-    const response = await api.get('/assets/yahoo/search', { 
-      params: { query } 
-    })
-    return response.data
-  },
+      searchYahooAssets: async (query: string, limit: number = 10): Promise<YahooSearchSimpleResult[]> => {
+        const response = await api.get('/assets/yahoo/search', {
+          params: { query, limit }
+        })
+        return response.data
+      },
 
-  getYahooFinanceAsset: async (ticker: string) => {
-    const response = await api.post('/assets/search', { ticker })
-    return response.data
-  },
+      getYahooAssetDetails: async (ticker: string): Promise<YahooSearchResult> => {
+        const response = await api.get(`/assets/yahoo/details/${ticker}`)
+        return response.data
+      },
 
-  saveYahooAsset: async (ticker: string) => {
-    const response = await api.post('/assets/yahoo/save', { ticker })
-    return response.data
-  },
-
-  updateAssetPrices: async () => {
-    const response = await api.post('/assets/update-prices')
-    return response.data
-  }
 }
