@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instalar dependências
-RUN npm install
+RUN npm ci
 
 # Copiar código fonte
 COPY . .
@@ -14,11 +14,12 @@ COPY . .
 # Criar arquivo de tipos do Next.js
 RUN touch next-env.d.ts
 
-# Configurar script de inicialização
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+# Build da aplicação
+RUN npm run build
+
+# Remover dependências de desenvolvimento
+RUN npm prune --production
 
 EXPOSE 3000
 
-CMD ["/start.sh"]
-
+CMD ["npm", "start"]
