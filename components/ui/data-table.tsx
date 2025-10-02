@@ -14,14 +14,26 @@ interface DataTableProps {
   title: string
   filters: FilterState
   onSearch: (value: string) => void
-  onStatus: (value: "active" | "inactive" | "all") => void
+  onStatus?: (value: "active" | "inactive" | "all") => void
   onType?: (value: string) => void
   onClientId?: (value: number | undefined) => void
+  onAssetId?: (value: number | undefined) => void
+  onExchange?: (value: string | undefined) => void
+  onCurrency?: (value: string | undefined) => void
+  onDateRange?: (dateRange: any) => void
   onReset: () => void
   showStatusFilter?: boolean
   showTypeFilter?: boolean
   showClientFilter?: boolean
+  showAssetFilter?: boolean
+  showExchangeFilter?: boolean
+  showCurrencyFilter?: boolean
+  showDateRangeFilter?: boolean
   clients?: Array<{ id: number; name: string }>
+  assets?: Array<{ id: number; name: string; ticker: string }>
+  exchanges?: Array<string>
+  currencies?: Array<string>
+  dateRangePlaceholder?: string
   placeholder?: string
   columns: Array<{
     key: string
@@ -44,11 +56,23 @@ export function DataTable({
   onStatus,
   onType,
   onClientId,
+  onAssetId,
+  onExchange,
+  onCurrency,
+  onDateRange,
   onReset,
   showStatusFilter = true,
   showTypeFilter = false,
   showClientFilter = false,
+  showAssetFilter = false,
+  showExchangeFilter = false,
+  showCurrencyFilter = false,
+  showDateRangeFilter = false,
   clients = [],
+  assets = [],
+  exchanges = [],
+  currencies = [],
+  dateRangePlaceholder = "Selecionar período",
   placeholder = "Pesquisar...",
   columns,
   data,
@@ -157,11 +181,23 @@ export function DataTable({
           onStatus={onStatus}
           onType={onType}
           onClientId={onClientId}
+          onAssetId={onAssetId}
+          onExchange={onExchange}
+          onCurrency={onCurrency}
+          onDateRange={onDateRange}
           onReset={onReset}
           showStatusFilter={showStatusFilter}
           showTypeFilter={showTypeFilter}
           showClientFilter={showClientFilter}
+          showAssetFilter={showAssetFilter}
+          showExchangeFilter={showExchangeFilter}
+          showCurrencyFilter={showCurrencyFilter}
+          showDateRangeFilter={showDateRangeFilter}
           clients={clients}
+          assets={assets}
+          exchanges={exchanges}
+          currencies={currencies}
+          dateRangePlaceholder={dateRangePlaceholder}
           placeholder={placeholder}
         />
 

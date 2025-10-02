@@ -15,7 +15,7 @@ export function AssetsTable() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingAsset, setEditingAsset] = useState<any>(null)
   const queryClient = useQueryClient()
-  const { filters, setSearch, setStatus, resetFilters, getApiParams } = useTableFilters()
+  const { filters, setSearch, setExchange, setCurrency, setDateRangePicker, resetFilters, getApiParams } = useTableFilters()
 
   const { data: assetsData, isLoading, refetch } = useQuery({
     queryKey: ['assets', filters],
@@ -90,6 +90,10 @@ export function AssetsTable() {
     { key: 'created_at', label: 'Data de Criação', sortable: true },
   ]
 
+  // Extrair listas únicas de bolsas e moedas
+  const exchanges = [...new Set(assetsData?.items?.map(asset => asset.exchange).filter(Boolean) || [])]
+  const currencies = [...new Set(assetsData?.items?.map(asset => asset.currency).filter(Boolean) || [])]
+
   const handleExport = () => {
     const exportData = assetsData?.items || []
     const headers = [
@@ -111,9 +115,17 @@ export function AssetsTable() {
         title="Ativos Financeiros"
         filters={filters}
         onSearch={setSearch}
-        onStatus={setStatus}
+        onExchange={setExchange}
+        onCurrency={setCurrency}
+        onDateRange={setDateRangePicker}
         onReset={resetFilters}
         showStatusFilter={false}
+        showExchangeFilter={true}
+        showCurrencyFilter={true}
+        showDateRangeFilter={true}
+        exchanges={exchanges}
+        currencies={currencies}
+        dateRangePlaceholder="Data de criação"
         columns={columns}
         data={assetsData?.items || []}
         isLoading={isLoading}

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { allocationsService } from '@/services/allocations'
 import { clientsService } from '@/services/clients'
+import { assetsService } from '@/services/assets'
 import { AddAllocationDialog } from './add-allocation-dialog'
 import { DataTable } from '@/components/ui/data-table'
 import { useTableFilters } from '@/hooks/use-table-filters'
@@ -16,7 +17,7 @@ export function AllocationsTable() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingAllocation, setEditingAllocation] = useState<any>(null)
   const queryClient = useQueryClient()
-  const { filters, setSearch, setStatus, setClientId, resetFilters, getApiParams } = useTableFilters()
+  const { filters, setSearch, setClientId, setAssetId, setDateRangePicker, resetFilters, getApiParams } = useTableFilters()
 
   const { data: allocationsData, isLoading, refetch } = useQuery({
     queryKey: ['allocations', filters],
@@ -27,6 +28,11 @@ export function AllocationsTable() {
   const { data: clientsData } = useQuery({
     queryKey: ['clients'],
     queryFn: () => clientsService.getClients({}),
+  })
+
+  const { data: assetsData } = useQuery({
+    queryKey: ['assets'],
+    queryFn: () => assetsService.getAssets({ size: 1000 }),
   })
 
   const deleteAllocationMutation = useMutation({
@@ -109,6 +115,12 @@ export function AllocationsTable() {
     name: client.name
   })) || []
 
+  const assets = assetsData?.items?.map(asset => ({
+    id: asset.id,
+    name: asset.name,
+    ticker: asset.ticker
+  })) || []
+
   const handleExport = () => {
     const exportData = allocationsData?.items || []
     const headers = [
@@ -130,12 +142,17 @@ export function AllocationsTable() {
         title="Alocações"
         filters={filters}
         onSearch={setSearch}
-        onStatus={setStatus}
         onClientId={setClientId}
+        onAssetId={setAssetId}
+        onDateRange={setDateRangePicker}
         onReset={resetFilters}
         showStatusFilter={false}
         showClientFilter={true}
+        showAssetFilter={true}
+        showDateRangeFilter={true}
         clients={clients}
+        assets={assets}
+        dateRangePlaceholder="Data da compra"
         columns={columns}
         data={allocationsData?.items || []}
         isLoading={isLoading}

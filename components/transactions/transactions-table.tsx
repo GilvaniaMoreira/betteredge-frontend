@@ -16,7 +16,7 @@ export function TransactionsTable() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingTransaction, setEditingTransaction] = useState<any>(null)
   const queryClient = useQueryClient()
-  const { filters, setSearch, setStatus, setType, setClientId, resetFilters, getApiParams } = useTableFilters()
+  const { filters, setSearch, setType, setClientId, setDateRangePicker, resetFilters, getApiParams } = useTableFilters()
 
   const { data: transactionsData, isLoading, refetch } = useQuery({
     queryKey: ['transactions', filters],
@@ -109,7 +109,6 @@ export function TransactionsTable() {
     { key: 'client.name', label: 'Cliente', sortable: true },
     { key: 'type', label: 'Tipo', sortable: true },
     { key: 'amount', label: 'Valor', sortable: true },
-    { key: 'date', label: 'Data', sortable: true },
     { key: 'note', label: 'Observação', sortable: false },
     { key: 'created_at', label: 'Data de Criação', sortable: true },
   ]
@@ -126,7 +125,6 @@ export function TransactionsTable() {
       { key: 'client.name', label: 'Cliente' },
       { key: 'type', label: 'Tipo' },
       { key: 'amount', label: 'Valor' },
-      { key: 'date', label: 'Data' },
       { key: 'note', label: 'Observação' },
       { key: 'created_at', label: 'Data de Criação' },
     ]
@@ -140,14 +138,16 @@ export function TransactionsTable() {
         title="Transações"
         filters={filters}
         onSearch={setSearch}
-        onStatus={setStatus}
         onType={setType}
         onClientId={setClientId}
+        onDateRange={setDateRangePicker}
         onReset={resetFilters}
         showStatusFilter={false}
         showTypeFilter={true}
         showClientFilter={true}
+        showDateRangeFilter={true}
         clients={clients}
+        dateRangePlaceholder="Data de criação"
         columns={columns}
         data={transactionsData?.items || []}
         isLoading={isLoading}

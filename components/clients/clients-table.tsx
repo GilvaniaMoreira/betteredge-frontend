@@ -15,7 +15,7 @@ export function ClientsTable() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingClient, setEditingClient] = useState<any>(null)
   const queryClient = useQueryClient()
-  const { filters, setSearch, setStatus, resetFilters, getApiParams } = useTableFilters()
+  const { filters, setSearch, setStatus, setDateRangePicker, resetFilters, getApiParams } = useTableFilters()
 
   const { data: clientsData, isLoading, refetch } = useQuery({
     queryKey: ['clients', filters],
@@ -96,7 +96,11 @@ export function ClientsTable() {
         filters={filters}
         onSearch={setSearch}
         onStatus={setStatus}
+        onDateRange={setDateRangePicker}
         onReset={resetFilters}
+        showStatusFilter={true}
+        showDateRangeFilter={true}
+        dateRangePlaceholder="Data de criação"
         columns={columns}
         data={clientsData?.items || []}
         isLoading={isLoading}
