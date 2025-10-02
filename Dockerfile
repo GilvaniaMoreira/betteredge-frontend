@@ -17,9 +17,6 @@ RUN touch next-env.d.ts
 # Build da aplicação
 RUN npm run build
 
-# Remover dependências de desenvolvimento
-RUN npm prune --production
-
 EXPOSE 3000
 
 CMD ["npm", "start"]
