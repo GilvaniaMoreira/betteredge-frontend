@@ -1,12 +1,12 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { formatCurrency } from '@/lib/utils'
 import { allocationsService } from '@/services/allocations'
 import { clientsService } from '@/services/clients'
-import { formatCurrency } from '@/lib/utils'
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
-import { useState, useEffect } from 'react'
 
 export function AllocationChart() {
   const [isClient, setIsClient] = useState(false)
@@ -77,7 +77,7 @@ export function AllocationChart() {
   }
 
   // Função para gerar cores dinamicamente baseada no índice
-  const generateColor = (index: number, total: number) => {
+  const generateColor = (index: number) => {
     const hue = (index * 137.5) % 360 // Usa o ângulo dourado para distribuição uniforme
     const saturation = 70 + (index % 3) * 10 // Varia entre 70-90%
     const lightness = 50 + (index % 2) * 10 // Varia entre 50-60%
@@ -87,7 +87,7 @@ export function AllocationChart() {
   const chartData = clientAllocations.map((client, index) => ({
     name: client.client_name,
     value: client.total_value,
-    fill: generateColor(index, clientAllocations.length),
+    fill: generateColor(index),
     client_id: client.client_id,
     assets_count: client.assets_count,
     total_quantity: client.total_quantity

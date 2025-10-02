@@ -128,7 +128,7 @@ export function DataTable({
     return value?.toString() || '-'
   }
 
-  const defaultRenderActions = (row: any) => (
+  const _defaultRenderActions = (_row: any) => (
     <div className="flex items-center gap-2">
       <Button variant="outline" size="sm">
         Editar

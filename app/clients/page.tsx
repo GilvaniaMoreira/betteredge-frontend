@@ -2,12 +2,12 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/hooks/use-auth'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
 import { ClientsTable } from '@/components/clients/clients-table'
 import { Loading } from '@/components/ui/loading'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function ClientsPage() {
   const router = useRouter()

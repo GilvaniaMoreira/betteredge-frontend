@@ -1,12 +1,12 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { TrendingUp, Users, PieChart } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { transactionsService } from '@/services/transactions'
+import { formatCurrency } from '@/lib/utils'
 import { allocationsService } from '@/services/allocations'
 import { clientsService } from '@/services/clients'
-import { formatCurrency } from '@/lib/utils'
-import { TrendingUp, TrendingDown, Users, PieChart } from 'lucide-react'
+import { transactionsService } from '@/services/transactions'
 
 export function OverviewCards() {
   const { data: captationStats } = useQuery({

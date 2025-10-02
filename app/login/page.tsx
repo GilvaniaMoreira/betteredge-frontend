@@ -2,11 +2,11 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/hooks/use-auth'
 import { LoginForm } from '@/components/forms/login-form'
-import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 import { Loading } from '@/components/ui/loading'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function LoginPage() {
   const router = useRouter()

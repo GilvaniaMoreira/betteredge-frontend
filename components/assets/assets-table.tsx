@@ -13,7 +13,7 @@ import { exportToCSV } from '@/lib/export-csv'
 
 export function AssetsTable() {
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [editingAsset, setEditingAsset] = useState<any>(null)
+  const [_editingAsset, setEditingAsset] = useState<any>(null)
   const queryClient = useQueryClient()
   const { filters, setSearch, setExchange, setCurrency, setDateRangePicker, resetFilters, getApiParams } = useTableFilters()
 
